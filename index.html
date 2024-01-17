@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL to QR Code</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 50px;
+            height: 100vh;
+            /* background-color: rgb(185, 94, 254); */
+            background: rgb(2,0,36);
+background: linear-gradient(121deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 55%, rgba(0,212,255,1) 100%);
+
+        }
+        .border{
+            /* border: 1px solid black; */
+            background-color: rgba(255, 255, 255, 0.275);
+            height: fit-content;
+            border-radius: 10px;
+            width: 30vw;
+            padding: 10px;
+            margin: auto;
+            /* display: flex; */
+        }
+        #qrcode-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px; /* Adjust the height as needed */
+        }
+        button{
+            padding: 3px;
+        }
+        input{
+            padding: 2px;
+        }
+        @media screen and (max-width:1200px) {
+            .border{
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                /* justify-content: center; */
+                /* background-color: blue; */
+            }
+            input{
+                margin: auto;
+                width: 85%;
+            }
+            button{
+                width: 40%;
+                margin: auto;
+                font-size: 80%;
+            }
+        }
+        @media screen and (max-width:420px) {
+            button{
+                font-size: x-small;
+                overflow: hidden;
+            }
+        }
+        /* #qrcode {
+            /* No need for margin-top now */
+        /* } */
+    </style>
+</head>
+<body>
+    <div class="border">
+        <h2>URL to QR Code Generator</h2>
+        <label for="urlInput">Enter URL:</label>
+        <input type="text" id="urlInput" placeholder="Enter the URL">
+        <button onclick="generateQRCode()">Generate QR Code</button>
+
+        <div id="qrcode-container" onclick="downloadQRCode()">
+            <div id="qrcode"></div>
+        </div>
+    </div>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script>
+        function generateQRCode() {
+            var urlInput = document.getElementById('urlInput').value.trim();
+
+            if (urlInput !== "") {
+                document.getElementById('qrcode').innerHTML = '';
+                var qrcode = new QRCode(document.getElementById('qrcode'), {
+                    text: urlInput,
+                    width: 128,
+                    height: 128
+                });
+            } else {
+                alert('Please enter a valid URL');
+            }
+        }
+
+        function downloadQRCode() {
+            // Check if the QR code has been generated
+            var qrContainer = document.getElementById('qrcode-container');
+            var qrImage = qrContainer.getElementsByTagName('img')[0];
+
+            if (qrImage) {
+                // Create a canvas to convert the image to a Data URL
+                var canvas = document.createElement('canvas');
+                var context = canvas.getContext('2d');
+                canvas.width = qrImage.width;
+                canvas.height = qrImage.height;
+                context.drawImage(qrImage, 0, 0);
+
+                // Create a Data URL and set it as the download link's href
+                var dataUrl = canvas.toDataURL('image/png');
+                var downloadLink = document.createElement('a');
+                downloadLink.href = dataUrl;
+                downloadLink.download = 'qrcode.png';
+
+                // Simulate a click on the download link
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            }
+        }
+    </script>
+</body>
+</html>
